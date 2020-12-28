@@ -29,6 +29,8 @@ import mdbtools.libmdb.*;
 
 public class mdb_export
 {
+  private static String MY_USAGE = "usage: mdb_export <path_to_mdb> <tablename>";
+
   public static boolean is_text_type(int x)
   {
     return x==Constants.MDB_TEXT || x==Constants.MDB_MEMO || x==Constants.MDB_SDATETIME;
@@ -36,13 +38,8 @@ public class mdb_export
 
   public static void main(String[] args)
   {
-    args = new String[2];
-    args[0] = "/home/whoever/Downloads/test.mdb";
-    args[1] = "user";
-
-    int rows;
     int i, j, k;
-//    char[] buf = new char[2048];
+
     MdbHandle mdb;
     MdbCatalogEntry entry;
     MdbTableDef table;
@@ -52,23 +49,32 @@ public class mdb_export
     String delimiter = ",";
     boolean header_row = true;
     boolean quote_text = true;
-    int  opt;
-//    char *s;
-    String filename = args[0];
-    String tablename = args[1];
+
+    String filePath = args[0];
+    String tableName = args[1];
+
+    if (filePath == null || filePath.length() < Constants.MIN_FILENAME_LENGTH)
+    {
+      Util.die(MY_USAGE, "Filename is too short.  Must be >= " + Constants.MIN_FILENAME_LENGTH + " characters.");
+    }
+
+    if (tableName == null || tableName.length() < Constants.MIN_TABLENAME_LENGTH)
+    {
+      Util.die(MY_USAGE, "Table name is too short.  Must be >= " + Constants.MIN_TABLENAME_LENGTH + " characters.");
+    }
 
     mem.mdb_init();
 
     try
     {
-      mdb = file.mdb_open(new mdbtools.jdbc2.File(args[0]));
+      mdb = file.mdb_open(new mdbtools.jdbc2.File(filePath));
 
       Catalog.mdb_read_catalog(mdb, Constants.MDB_TABLE);
 
       for (i=0;i<mdb.num_catalog;i++)
       {
         entry = (MdbCatalogEntry)mdb.catalog.get(i);
-        if (entry.object_type == Constants.MDB_TABLE && entry.object_name.equals(tablename))
+        if (entry.object_type == Constants.MDB_TABLE && entry.object_name.equals(tableName))
         {
           table = Table.mdb_read_table(entry);
           Table.mdb_read_columns(table);
@@ -97,7 +103,6 @@ public class mdb_export
             {
               System.out.print("\"");
               for (k = 0; k < bound_values[0].s.length();k++)
-  //            for (s = bound_values[0];*s;s++)
               {
                 char c = bound_values[0].s.charAt(k);
                 if (c == '"')
@@ -119,7 +124,6 @@ public class mdb_export
                 System.out.print(delimiter);
                 System.out.print("\"");
                 for (k = 0; k < bound_values[j].s.length();k++)
-//              for (s = bound_values[j];*s;s++)
                 {
                   char c = bound_values[j].s.charAt(k);
                   if (c == '"')
@@ -136,20 +140,13 @@ public class mdb_export
             }
             System.out.println("");
           }
-  //        for (j=0;j<table->num_cols;j++)
-  //        {
-  //          free(bound_values[j]);
-  //        }
         }
       }
-
-  //    mdb_free_handle(mdb);
-  //    mdb_exit();
     }
     catch(Exception e)
     {
+      System.out.println(String.format("EXCEPTION processing(%s) - %s", filePath, e.getMessage()));
       e.printStackTrace();
     }
   }
 }
-

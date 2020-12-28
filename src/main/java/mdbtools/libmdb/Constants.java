@@ -74,4 +74,7 @@ public class Constants
   public static final int MDB_CATALOG_PG = 18;
   public static final int MDB_MEMO_OVERHEAD = 12;
   public static final int MDB_BIND_SIZE = 16384;
+
+  public static final int MIN_FILENAME_LENGTH = 6;
+  public static final int MIN_TABLENAME_LENGTH = 1;
 }

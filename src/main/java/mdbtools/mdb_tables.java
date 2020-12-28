@@ -31,33 +31,39 @@ import mdbtools.libmdb.file;
 import mdbtools.libmdb.mem;
 import mdbtools.libmdb.MdbCatalogEntry;
 import mdbtools.libmdb.MdbHandle;
+import mdbtools.libmdb.Util;
 
 import java.io.IOException;
 
 public class mdb_tables
 {
+  private static String MY_USAGE =
+  "usage: mdb_tables [options] <path_to_mdb>\n"
+   + "   where [options] are:\n"
+   + "      -S: skip system tables\n"
+   + "      -1: print table names 1 to a line\n"
+   + "      -d<char>: set the delimiter between table names to <char>\n";
   public static void main(String[] args)
   {
-//    args = new String[1];
-//    args[0] = "/home/whoever/Downloads/test.mdb";
+    int   i;
 
-    int   i, j, k;
     MdbHandle mdb;
     MdbCatalogEntry entry;
-//    MdbTableDef *table;
-//    MdbColumn *col;
+
     char delimiter = 0;
     boolean line_break = false;
     boolean skip_sys = true;
     char opt;
 
-    if (args.length < 1)
-    {
-      System.out.println("Usage: mdb_tables [-S] [-1 | -d<delimiter>] <file>");
-      return;
+    String filePath = args[args.length - 1];
+
+    if (filePath == null || filePath.length() < Constants.MIN_FILENAME_LENGTH) {
+      Util.die(MY_USAGE, "Filename is too short.  Must be >= " + Constants.MIN_FILENAME_LENGTH + " characters.");
     }
 
-    for (i = 0; i < args.length; i++)
+    // Only look at arguments up to, but not including, the last one
+    // The last one is assumed to be the filePath
+    for (i = 0; i < args.length - 1; i++)
     {
       opt = args[i].charAt(0);
       if (opt == '-')
@@ -68,12 +74,13 @@ public class mdb_tables
         {
           case 'S':
             skip_sys = false;
+            break;
           case '1':
             line_break = true;
-          break;
+            break;
           case 'd':
             delimiter = args[i].charAt(2);
-          break;
+            break;
           }
       }
     }
@@ -84,7 +91,7 @@ public class mdb_tables
     /* open the database */
     try
     {
-      mdb = file.mdb_open(new mdbtools.jdbc2.File(args[0]));
+      mdb = file.mdb_open(new mdbtools.jdbc2.File(filePath));
       /* read the catalog */
       Catalog.mdb_read_catalog(mdb,Constants.MDB_TABLE);
     }
@@ -96,7 +103,6 @@ public class mdb_tables
     }
 
     /* loop over each entry in the catalog */
-    System.out.println("num_catalog: " + mdb.num_catalog);
     for (i=0; i < mdb.num_catalog; i++)
     {
       entry = (MdbCatalogEntry)mdb.catalog.get(i);

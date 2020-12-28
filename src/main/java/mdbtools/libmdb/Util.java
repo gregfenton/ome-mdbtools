@@ -54,4 +54,13 @@ public class Util
       return new String(bytes,start,bytes.length-start);
     }
   }
+
+  public static void die(String msg, String usage)
+  {
+    System.err.println(msg);
+    System.err.println("");
+    System.err.println(usage);
+
+    Runtime.getRuntime().exit(1);
+  }
 }

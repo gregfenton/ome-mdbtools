@@ -25,6 +25,8 @@
 
 package mdbtools.libmdb;
 
+import java.io.PrintStream;
+
 public class Util
 {
   // convert from access string format to unicode
@@ -62,5 +64,92 @@ public class Util
     System.err.println(usage);
 
     Runtime.getRuntime().exit(1);
+  }
+
+  public static boolean is_text_type(int x) {
+    return x == Constants.MDB_TEXT || x == Constants.MDB_MEMO || x == Constants.MDB_SDATETIME;
+  }
+
+  public static void exportTable(String filePath, String tableName, PrintStream printStream)
+  {
+    int i, j, k;
+
+    MdbHandle mdb;
+    MdbCatalogEntry entry;
+    MdbTableDef table;
+    MdbColumn col = null;
+    /* doesn't handle tables > 256 columns. Can that happen? */
+    Holder[] bound_values = new Holder[256];
+    String delimiter = ",";
+    boolean header_row = true;
+    boolean quote_text = true;
+
+    mem.mdb_init();
+
+    try {
+      mdb = file.mdb_open(new mdbtools.jdbc2.File(filePath));
+
+      Catalog.mdb_read_catalog(mdb, Constants.MDB_TABLE);
+
+      for (i = 0; i < mdb.num_catalog; i++) {
+        entry = (MdbCatalogEntry) mdb.catalog.get(i);
+        if (entry.object_type == Constants.MDB_TABLE && entry.object_name.equals(tableName)) {
+          table = Table.mdb_read_table(entry);
+          Table.mdb_read_columns(table);
+          Data.mdb_rewind_table(table);
+
+          for (j = 0; j < table.num_cols; j++) {
+            bound_values[j] = new Holder();
+            Data.mdb_bind_column(table, j + 1, bound_values[j]);
+          }
+          if (header_row) {
+            col = (MdbColumn) table.columns.get(0);
+            printStream.print(col.name);
+            for (j = 1; j < table.num_cols; j++) {
+              col = (MdbColumn) table.columns.get(j);
+              printStream.print(delimiter + col.name);
+            }
+            printStream.println("");
+          }
+
+          while (Data.mdb_fetch_row(table)) {
+            if (quote_text && is_text_type(col.col_type)) {
+              printStream.print("\"");
+              for (k = 0; k < bound_values[0].s.length(); k++) {
+                char c = bound_values[0].s.charAt(k);
+                if (c == '"')
+                  printStream.print("\"\"");
+                else
+                  printStream.print(c);
+              }
+              printStream.print("\"");
+            } else {
+              printStream.print(bound_values[0].s);
+            }
+            for (j = 1; j < table.num_cols; j++) {
+              col = (MdbColumn) table.columns.get(j);
+              if (quote_text && is_text_type(col.col_type)) {
+                printStream.print(delimiter);
+                printStream.print("\"");
+                for (k = 0; k < bound_values[j].s.length(); k++) {
+                  char c = bound_values[j].s.charAt(k);
+                  if (c == '"')
+                    printStream.print("\"\"");
+                  else
+                    printStream.print(c);
+                }
+                printStream.print("\"");
+              } else {
+                printStream.print(delimiter + bound_values[j].s);
+              }
+            }
+            printStream.println("");
+          }
+        }
+      }
+    } catch (Exception e) {
+      printStream.println(String.format("EXCEPTION processing(%s) - %s", filePath, e.getMessage()));
+      e.printStackTrace();
+    }
   }
 }

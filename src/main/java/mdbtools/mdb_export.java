@@ -39,12 +39,12 @@ public class mdb_export
 
     if (filePath == null || filePath.length() < Constants.MIN_FILENAME_LENGTH)
     {
-      Util.die(MY_USAGE, "<path_to_mdb> is too short.  Must be >= " + Constants.MIN_FILENAME_LENGTH + " characters.");
+      Util.die("<path_to_mdb> is too short.  Must be >= " + Constants.MIN_FILENAME_LENGTH + " characters.", MY_USAGE);
     }
 
     if (tableName == null || tableName.length() < Constants.MIN_TABLENAME_LENGTH)
     {
-      Util.die(MY_USAGE, "<table_name> is too short.  Must be >= " + Constants.MIN_TABLENAME_LENGTH + " characters.");
+      Util.die("<table_name> is too short.  Must be >= " + Constants.MIN_TABLENAME_LENGTH + " characters.", MY_USAGE);
     }
 
     Util.exportTable(filePath, tableName, System.out);

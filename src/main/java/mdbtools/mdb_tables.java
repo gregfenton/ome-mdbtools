@@ -60,7 +60,7 @@ public class mdb_tables
 
     if (filePath == null || filePath.length() < Constants.MIN_FILENAME_LENGTH)
     {
-      Util.die(MY_USAGE, "<path_to_mdb> is too short.  Must be >= " + Constants.MIN_FILENAME_LENGTH + " characters.");
+      Util.die("<path_to_mdb> is too short.  Must be >= " + Constants.MIN_FILENAME_LENGTH + " characters.", MY_USAGE);
     }
 
     // Only look at arguments up to, but not including, the last one

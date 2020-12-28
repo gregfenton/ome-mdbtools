@@ -59,13 +59,42 @@ public class Util
     }
   }
 
+  /**
+   * Exits the program with an error code of 1.
+   * 
+   * @param msg the message as to why this program is exiting
+   */
+  public static void die(String msg)
+  {
+    die(msg, "");
+  }
+
+  /**
+   * Exits the program with an error code of 1.
+   * 
+   * @param msg the message as to why this program is exiting
+   * @param usage the program's usage string
+   */
   public static void die(String msg, String usage)
   {
+    die(msg, 1, usage);
+  }
+
+  /**
+   * Exits the program with the given error code.
+   * 
+   * @param msg the message as to why this program is exiting
+   * @param exitCode the exit code the process exits with
+   * @param usage the program's usage string
+   */
+  public static void die(String msg, int exitCode, String usage)
+  {
+    System.err.println("");
     System.err.println(msg);
     System.err.println("");
     System.err.println(usage);
 
-    Runtime.getRuntime().exit(1);
+    Runtime.getRuntime().exit(exitCode);
   }
 
   public static boolean is_text_type(int x) {
@@ -206,4 +235,30 @@ public class Util
     return tableNames;
   }
 
+  public static class StopWatch {
+
+    /* Private Instance Variables */
+    /**
+     * Stores the start time when an object of the StopWatch class is initialized.
+     */
+    private long startTime;
+
+    /**
+     * Custom constructor which initializes the {@link #startTime} parameter.
+     */
+    public StopWatch() {
+      startTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Gets the elapsed time (in seconds) since the time the object of StopWatch was
+     * initialized.
+     * 
+     * @return Elapsed time in seconds.
+     */
+    public double getElapsedTime() {
+      long endTime = System.currentTimeMillis();
+      return (double) (endTime - startTime) / (1000);
+    }
+  }
 }

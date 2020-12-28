@@ -85,6 +85,8 @@ public class MemoryData implements Data
 
   /**
    * Add a row of data
+   * @param row an array of objects to add as rows
+   * @throws RuntimeException if data has already been read
    */
   public void addRow(Object[] row)
   {
@@ -96,6 +98,9 @@ public class MemoryData implements Data
   /**
    * sort the data set by the given columns
    * each column is sorted seperate
+   * @param sortBy an array of column indexes by which we will sort
+   * @param ascending an array of column indexes by which we will ascend the sort
+   * @throws SQLException the SQL exception if a given column does not exist
    */
   public void sort(int[] sortBy,boolean[] ascending)
     throws SQLException

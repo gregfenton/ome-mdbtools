@@ -33,8 +33,8 @@ public class Util
   /**
    * easy way to call toString(Select) (if needed) on any object
    * also quotes strings and expands out arrays
-   * @param sql
-   * @param o
+   * @param sql a SQL select statement
+   * @param o an object
    * @return string
    */
   public static String toString(Select sql,Object o)

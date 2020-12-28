@@ -45,6 +45,9 @@ public class Engine
 
   /**
    * execute is used to tell the engine to do something
+   * @param sql the SQL statement to be executed
+   * @return the result of execute(sql)
+   * @throws SQLException the SQL exception
    */
   public Data execute(SQL sql)
     throws SQLException

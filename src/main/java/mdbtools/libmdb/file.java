@@ -104,6 +104,10 @@ public class file
 
   /**
    * mdb_read a wrapper for read that bails if anything is wrong
+   * @param mdb a handle to the MDB file
+   * @param pg the page number to be read
+   * @return the length of the read of the given page
+   * @throws IOException from _mdb_read_pg()
    */
   public static long mdb_read_pg(MdbHandle mdb, long pg)
     throws IOException

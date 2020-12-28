@@ -32,7 +32,12 @@ import java.sql.SQLException;
  */
 public interface Function
 {
-  /** given the data for a column execute the function */
+  /**
+   *  Given the data for a column execute the function
+   * @param column an object
+   * @return Object the result of executing the SQL
+   * @throws SQLException the SQL exception
+   */
   public Object execute(Object column)
     throws SQLException;
 }

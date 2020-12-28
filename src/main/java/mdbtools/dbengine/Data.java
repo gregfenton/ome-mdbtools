@@ -34,14 +34,19 @@ public interface Data
 {
   /**
    * goto the next (or first) row
+   * 
    * @return true if row exits, false if not
+   * @throws SQLException currently - function only throws SQLException
    */
   public boolean next()
     throws SQLException;
 
   /**
    * get the data at a certain column
+   *
    * @param index the column to get
+   * @return the data from the column
+   * @throws SQLException currently - function only throws SQLException
    */
   public Object get(int index)
     throws SQLException;

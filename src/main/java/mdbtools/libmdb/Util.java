@@ -25,7 +25,9 @@
 
 package mdbtools.libmdb;
 
+import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Vector;
 
 public class Util
 {
@@ -152,4 +154,56 @@ public class Util
       e.printStackTrace();
     }
   }
+
+  public static Vector<String> listTables(String filePath, boolean omitSystemTables)
+  {
+    MdbHandle mdb;
+    MdbCatalogEntry entry;
+    Vector<String> tableNames = new Vector<String>();
+
+    /* initialize the library */
+    mem.mdb_init();
+
+    /* open the database */
+    try
+    {
+      mdb = file.mdb_open(new mdbtools.jdbc2.File(filePath));
+      /* read the catalog */
+      Catalog.mdb_read_catalog(mdb,Constants.MDB_TABLE);
+    }
+    catch(IOException e)
+    {
+      System.out.println("Couldn't open or read database.\n");
+      e.printStackTrace();
+      return null;
+    }
+
+    /* loop over each entry in the catalog */
+    for (int i = 0; i < mdb.num_catalog; i++)
+    {
+      entry = (MdbCatalogEntry)mdb.catalog.get(i);
+
+      /* if it's a table */
+      if (entry.object_type == Constants.MDB_TABLE)
+      {
+        /* skip the MSys tables */
+        if (omitSystemTables == false || entry.object_name.startsWith("MSys") == false)
+        {
+          tableNames.add(entry.object_name);
+        }
+      }
+    }
+
+    try
+    {
+      mem.mdb_free_handle(mdb);
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
+
+    return tableNames;
+  }
+
 }

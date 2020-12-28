@@ -42,13 +42,13 @@ public class mdb_tables
   private static String MY_USAGE =
   "usage: mdb_tables [options] <path_to_mdb>\n"
    + "   where [options] are:\n"
-   + "      -S: skip system tables\n"
    + "      -1: print table names 1 to a line\n"
-   + "      -d<char>: set the delimiter between table names to <char>\n";
+   + "      -d<char>: print <char> as a delimiter between table names\n"
+   + "      -h: show this usage message and exit\n"
+   + "      -S: skip system tables\n";
   public static void main(String[] args)
   {
-    int   i;
-
+    int i;
     char delimiter = ' ';
     boolean oneNamePerLine = false;
     boolean omitSystemTables = true;
@@ -58,8 +58,9 @@ public class mdb_tables
 
     String filePath = args[args.length - 1];
 
-    if (filePath == null || filePath.length() < Constants.MIN_FILENAME_LENGTH) {
-      Util.die(MY_USAGE, "Filename is too short.  Must be >= " + Constants.MIN_FILENAME_LENGTH + " characters.");
+    if (filePath == null || filePath.length() < Constants.MIN_FILENAME_LENGTH)
+    {
+      Util.die(MY_USAGE, "<path_to_mdb> is too short.  Must be >= " + Constants.MIN_FILENAME_LENGTH + " characters.");
     }
 
     // Only look at arguments up to, but not including, the last one
@@ -82,7 +83,11 @@ public class mdb_tables
           case 'd':
             delimiter = args[i].charAt(2);
             break;
-          }
+          case 'h':
+            System.out.println(MY_USAGE);
+            Runtime.getRuntime().exit(0);
+            break;
+        }
       }
     }
 

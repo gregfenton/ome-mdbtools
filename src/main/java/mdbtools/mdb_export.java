@@ -30,19 +30,21 @@ import mdbtools.libmdb.Util;
 
 public class mdb_export
 {
-  private static String MY_USAGE = "usage: mdb_export <path_to_mdb> <tablename>";
+  private static String MY_USAGE = "usage: mdb_export <path_to_mdb> <table_name>";
 
   public static void main(String[] args)
   {
     String filePath = args[0];
     String tableName = args[1];
 
-    if (filePath == null || filePath.length() < Constants.MIN_FILENAME_LENGTH) {
-      Util.die(MY_USAGE, "Filename is too short.  Must be >= " + Constants.MIN_FILENAME_LENGTH + " characters.");
+    if (filePath == null || filePath.length() < Constants.MIN_FILENAME_LENGTH)
+    {
+      Util.die(MY_USAGE, "<path_to_mdb> is too short.  Must be >= " + Constants.MIN_FILENAME_LENGTH + " characters.");
     }
 
-    if (tableName == null || tableName.length() < Constants.MIN_TABLENAME_LENGTH) {
-      Util.die(MY_USAGE, "Table name is too short.  Must be >= " + Constants.MIN_TABLENAME_LENGTH + " characters.");
+    if (tableName == null || tableName.length() < Constants.MIN_TABLENAME_LENGTH)
+    {
+      Util.die(MY_USAGE, "<table_name> is too short.  Must be >= " + Constants.MIN_TABLENAME_LENGTH + " characters.");
     }
 
     Util.exportTable(filePath, tableName, System.out);
